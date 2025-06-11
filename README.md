@@ -1,30 +1,24 @@
-# AI Summarizer
+# AI Summarizer (100% Gratis, Tanpa OpenAI Key)
 
-Aplikasi AI untuk meringkas teks, artikel, dan video YouTube secara otomatis.  
-Tampilan modern ala Play Store, mobile friendly, dan cepat.
+Aplikasi AI untuk meringkas teks secara otomatis, menggunakan model Facebook BART dari HuggingFace (API publik, gratis, tanpa login).
 
 ## Fitur
-- Input: Teks, link artikel, atau YouTube
-- Output: Ringkasan poin-poin otomatis
+- Input: Teks (copy-paste)
+- Output: Ringkasan otomatis
 - Copy & Download ringkasan
 - Desain modern dan responsif
 
 ## Deploy
 1. Clone repo ini
-2. Buat file `.env.local` dan isi dengan:
-   ```
-   OPENAI_API_KEY=sk-xxxxxx
-   ```
-3. Jalankan:
+2. Jalankan:
    ```
    npm install
    npm run dev
    ```
-4. Deploy ke Vercel (auto-detect Next.js)
+3. Deploy ke Vercel (auto-detect Next.js, **tidak perlu setting API key/env variable**)
 
-## Demo
-Tampilan seperti Play Store:
-![Demo Screenshot](public/demo.png)
+## Powered by
+- [HuggingFace - facebook/bart-large-cnn](https://huggingface.co/facebook/bart-large-cnn)
 
 ## Lisensi
 MIT
