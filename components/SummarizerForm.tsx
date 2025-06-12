@@ -17,7 +17,7 @@ export default function SummarizerForm() {
       const res = await fetch("/api/summarize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input }),
+        body: JSON.stringify({ text: input }), // <--- ini diperbaiki
       });
       if (!res.ok) throw new Error("Gagal meringkas, coba lagi.");
       const data = await res.json();
