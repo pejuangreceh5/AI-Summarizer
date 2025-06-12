@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
     }
   );
   if (!hfResponse.ok) {
-    return NextResponse.json({ summary: "", error: "Gagal meringkas. Coba lagi!" }, { status: 500 });
+    const errText = await hfResponse.text();
+    return NextResponse.json({ summary: "", error: `Gagal meringkas: ${errText}` }, { status: 500 });
   }
   const data = await hfResponse.json();
   const summary = Array.isArray(data) && data[0]?.summary_text ? data[0].summary_text : "";
