@@ -5,17 +5,17 @@ export async function POST(req: Request) {
     const { text } = await req.json();
 
     if (!text || typeof text !== "string" || text.trim() === "") {
-      return new Response(JSON.stringify({ error: "Input text tidak boleh kosong." }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return Response.json(
+        { error: "Input text tidak boleh kosong." },
+        { status: 400 }
+      );
     }
 
     if (!HUGGINGFACE_API_KEY) {
-      return new Response(JSON.stringify({ error: "API key tidak ditemukan." }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      return Response.json(
+        { error: "HuggingFace API key tidak ditemukan di environment variable." },
+        { status: 500 }
+      );
     }
 
     const hfRes = await fetch(
@@ -33,29 +33,42 @@ export async function POST(req: Request) {
     const hfData = await hfRes.json();
 
     if (!hfRes.ok) {
-      return new Response(JSON.stringify({ error: "Gagal dari HuggingFace", detail: hfData }), {
-        status: hfRes.status,
-        headers: { "Content-Type": "application/json" },
-      });
+      return Response.json(
+        { error: "Gagal dari HuggingFace", detail: hfData },
+        { status: hfRes.status }
+      );
     }
 
-    const summary = Array.isArray(hfData) && hfData[0]?.summary_text ? hfData[0].summary_text : "";
+    // Versi lebih fleksibel untuk ambil summary
+    let summary = "";
+    if (Array.isArray(hfData)) {
+      summary = hfData[0]?.summary_text || JSON.stringify(hfData[0] || {});
+    } else if (typeof hfData === "object" && hfData.summary_text) {
+      summary = hfData.summary_text;
+    }
 
-    return new Response(JSON.stringify({ summary }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    if (!summary) {
+      return Response.json(
+        { error: "Ringkasan kosong. Coba lagi dengan teks berbeda." },
+        { status: 500 }
+      );
+    }
+
+    return Response.json({ summary }, { status: 200 });
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: "Server error", message: err.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return Response.json(
+      { error: "Server error", message: err.message || String(err) },
+      { status: 500 }
+    );
   }
 }
 
-export function GET() {
-  return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
-    status: 405,
-    headers: { "Content-Type": "application/json" },
-  });
+export async function GET() {
+  return Response.json({ error: "Method Not Allowed" }, { status: 405 });
+}
+export async function PUT() {
+  return Response.json({ error: "Method Not Allowed" }, { status: 405 });
+}
+export async function DELETE() {
+  return Response.json({ error: "Method Not Allowed" }, { status: 405 });
 }
