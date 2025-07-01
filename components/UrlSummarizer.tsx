@@ -1,22 +1,28 @@
+"use client";
 import { useState } from "react";
 
-export default function UrlSummarizer({ onTextExtracted }: { onTextExtracted: (text: string) => void }) {
+export default function UrlSummarizer({ onExtracted }: { onExtracted: (text: string) => void }) {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
-  const fetchAndExtract = async () => {
+  const handleExtract = async () => {
     setLoading(true);
-    setError(null);
+    setError("");
+
     try {
       const res = await fetch(`/api/extract?url=${encodeURIComponent(url)}`);
-      if (!res.ok) throw new Error("Gagal mengambil artikel dari URL");
-      const { text } = await res.json();
-      if (!text) throw new Error("Tidak ada teks artikel ditemukan");
-      onTextExtracted(text);
-    } catch (e: any) {
-      setError(e.message || "Gagal fetch artikel");
+      const data = await res.json();
+
+      if (res.ok && data.text) {
+        onExtracted(data.text);
+      } else {
+        setError(data.error || "Gagal mengambil artikel.");
+      }
+    } catch {
+      setError("Gagal terhubung ke server.");
     }
+
     setLoading(false);
   };
 
@@ -26,14 +32,17 @@ export default function UrlSummarizer({ onTextExtracted }: { onTextExtracted: (t
         type="text"
         value={url}
         onChange={e => setUrl(e.target.value)}
-        placeholder="Tempelkan URL artikel (https://...)"
-        className="border px-2 py-1 rounded w-2/3"
+        placeholder="Tempel URL artikel..."
+        className="border px-3 py-2 rounded w-full mb-2"
       />
-      <button onClick={fetchAndExtract} className="bg-green-500 ml-2 px-3 py-1 rounded text-white">
-        Ambil Artikel
+      <button
+        onClick={handleExtract}
+        disabled={loading || !url}
+        className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded"
+      >
+        {loading ? "Mengambil..." : "Ambil Artikel"}
       </button>
-      {loading && <div>Memuat artikel...</div>}
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <p className="text-red-600 mt-2 text-sm">{error}</p>}
     </div>
   );
 }
