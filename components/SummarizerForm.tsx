@@ -14,10 +14,10 @@ export default function SummarizerForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/summarize", {
+      const res = await fetch("/api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: input }), // <--- ini diperbaiki
+        body: JSON.stringify({ text: input }),
       });
       if (!res.ok) throw new Error("Gagal meringkas, coba lagi.");
       const data = await res.json();
@@ -72,4 +72,4 @@ export default function SummarizerForm() {
       )}
     </form>
   );
-      }
+}
