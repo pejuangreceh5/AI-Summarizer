@@ -39,7 +39,6 @@ export default function SummarizerForm() {
     navigator.clipboard.writeText(summary);
   }
 
-  // ✅ Upload file .txt
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -60,10 +59,10 @@ export default function SummarizerForm() {
     >
       <h2 className="text-lg font-bold text-[#388e3c] mb-2">AI Text Summarizer</h2>
 
-      {/* ✅ URL Summarizer */}
+      {/* ✅ Ringkas dari URL */}
       <UrlSummarizer onExtracted={setInput} />
 
-      {/* ✅ Upload File */}
+      {/* ✅ Upload File .txt */}
       <input
         type="file"
         accept=".txt"
@@ -71,7 +70,7 @@ export default function SummarizerForm() {
         className="mb-2"
       />
 
-      {/* ✅ Textarea */}
+      {/* ✅ Textarea input */}
       <textarea
         className="rounded-lg border border-gray-200 px-3 py-2 resize-none min-h-[120px] focus:outline-[#43e97b] focus:ring-2"
         placeholder="Tempel atau ketik teks panjang di sini..."
@@ -80,6 +79,7 @@ export default function SummarizerForm() {
         required
       />
 
+      {/* ✅ Tombol Ringkas */}
       <button
         disabled={loading || !input}
         type="submit"
@@ -88,22 +88,31 @@ export default function SummarizerForm() {
         {loading ? "Meringkas..." : "Ringkas Sekarang"}
       </button>
 
+      {/* ✅ Error */}
       {error && (
         <div className="text-red-600 bg-red-50 rounded-lg px-4 py-2">{error}</div>
       )}
 
+      {/* ✅ Hasil Ringkasan & Tombol Ekspor */}
       {summary && (
-        <div className="bg-[#e8f5e9] text-[#2e7d32] rounded-xl p-4 shadow flex flex-col gap-3 animate-fade-in">
-          <div className="font-bold mb-1">Ringkasan:</div>
-          <div className="whitespace-pre-line">{summary}</div>
-          <div className="flex gap-2 mt-2">
-            <button onClick={copySummary} className="text-xs bg-[#43e97b] hover:bg-[#388e3c] text-white px-4 py-1 rounded-lg">Salin</button>
+        <div className="bg-[#e8f5e9] text-[#2e7d32] rounded-xl p-4 shadow mt-4 animate-fade-in">
+          <div className="font-bold mb-2">Ringkasan:</div>
+          <div className="whitespace-pre-line mb-4">{summary}</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button
+              onClick={copySummary}
+              type="button"
+              className="text-xs bg-[#43e97b] hover:bg-[#388e3c] text-white px-4 py-2 rounded-lg"
+            >
+              Salin
+            </button>
             <a
               href={`data:text/plain;charset=utf-8,${encodeURIComponent(summary)}`}
               download="ringkasan.txt"
-              className="text-xs bg-[#388e3c] hover:bg-[#2e7d32] text-white px-4 py-1 rounded-lg"
-            >Download</a>
-            {/* ✅ Ekspor ke PDF dan Word */}
+              className="text-xs bg-[#388e3c] hover:bg-[#2e7d32] text-white px-4 py-2 rounded-lg text-center"
+            >
+              Download TXT
+            </a>
             <ExportPDFButton summary={summary} />
             <ExportWordButton summary={summary} />
           </div>
@@ -111,4 +120,4 @@ export default function SummarizerForm() {
       )}
     </form>
   );
-      }
+  }
