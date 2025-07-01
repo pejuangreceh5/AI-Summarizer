@@ -14,11 +14,13 @@ export default function SummarizerForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api", {
+      // ✅ Diperbaiki: arahkan ke endpoint yang benar
+      const res = await fetch("/api/summarize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input }),
       });
+
       if (!res.ok) throw new Error("Gagal meringkas, coba lagi.");
       const data = await res.json();
       if (data.summary) setSummary(data.summary);
