@@ -1,5 +1,8 @@
 "use client";
 import { useState } from "react";
+import UrlSummarizer from "./UrlSummarizer";
+import ExportPDFButton from "./ExportPDFButton";
+import ExportWordButton from "./ExportWordButton";
 
 export default function SummarizerForm() {
   const [input, setInput] = useState("");
@@ -36,7 +39,7 @@ export default function SummarizerForm() {
     navigator.clipboard.writeText(summary);
   }
 
-  // ✅ Handle upload file .txt
+  // ✅ Upload file .txt
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -55,9 +58,12 @@ export default function SummarizerForm() {
       className="bg-white/90 shadow-xl rounded-2xl px-6 py-8 flex flex-col gap-5"
       onSubmit={handleSubmit}
     >
-      <h2 className="text-lg font-bold text-[#388e3c] mb-2">Tempel teks atau unggah file .txt</h2>
+      <h2 className="text-lg font-bold text-[#388e3c] mb-2">AI Text Summarizer</h2>
 
-      {/* ✅ Upload file */}
+      {/* ✅ URL Summarizer */}
+      <UrlSummarizer onExtracted={setInput} />
+
+      {/* ✅ Upload File */}
       <input
         type="file"
         accept=".txt"
@@ -65,6 +71,7 @@ export default function SummarizerForm() {
         className="mb-2"
       />
 
+      {/* ✅ Textarea */}
       <textarea
         className="rounded-lg border border-gray-200 px-3 py-2 resize-none min-h-[120px] focus:outline-[#43e97b] focus:ring-2"
         placeholder="Tempel atau ketik teks panjang di sini..."
@@ -96,6 +103,9 @@ export default function SummarizerForm() {
               download="ringkasan.txt"
               className="text-xs bg-[#388e3c] hover:bg-[#2e7d32] text-white px-4 py-1 rounded-lg"
             >Download</a>
+            {/* ✅ Ekspor ke PDF dan Word */}
+            <ExportPDFButton summary={summary} />
+            <ExportWordButton summary={summary} />
           </div>
         </div>
       )}
