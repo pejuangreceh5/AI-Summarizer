@@ -14,7 +14,6 @@ export default function SummarizerForm() {
     setLoading(true);
 
     try {
-      // ✅ Diperbaiki: arahkan ke endpoint yang benar
       const res = await fetch("/api/summarize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -23,11 +22,13 @@ export default function SummarizerForm() {
 
       if (!res.ok) throw new Error("Gagal meringkas, coba lagi.");
       const data = await res.json();
+
       if (data.summary) setSummary(data.summary);
       else setError("Ringkasan tidak ditemukan.");
     } catch (e: any) {
       setError(e.message || "Gagal meringkas.");
     }
+
     setLoading(false);
   }
 
@@ -63,12 +64,19 @@ export default function SummarizerForm() {
           <div className="font-bold mb-1">Ringkasan:</div>
           <div className="whitespace-pre-line">{summary}</div>
           <div className="flex gap-2 mt-2">
-            <button onClick={copySummary} className="text-xs bg-[#43e97b] hover:bg-[#388e3c] text-white px-4 py-1 rounded-lg">Salin</button>
+            <button
+              onClick={copySummary}
+              className="text-xs bg-[#43e97b] hover:bg-[#388e3c] text-white px-4 py-1 rounded-lg"
+            >
+              Salin
+            </button>
             <a
               href={`data:text/plain;charset=utf-8,${encodeURIComponent(summary)}`}
               download="ringkasan.txt"
               className="text-xs bg-[#388e3c] hover:bg-[#2e7d32] text-white px-4 py-1 rounded-lg"
-            >Download</a>
+            >
+              Download
+            </a>
           </div>
         </div>
       )}
