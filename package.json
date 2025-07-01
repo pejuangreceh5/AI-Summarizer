@@ -12,7 +12,10 @@
     "next": "14.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "jsdom": "^24.0.0"
+    "jsdom": "^24.0.0",
+    "jspdf": "^2.5.1",
+    "file-saver": "^2.0.5",
+    "docx": "^8.0.3"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.17",
