@@ -2,24 +2,22 @@ const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_TOKEN;
 
 export async function POST(req: Request) {
   try {
-    // Parsing dan validasi input
     const { text } = await req.json();
 
     if (!text || typeof text !== "string" || text.trim() === "") {
-      return Response.json(
-        { error: "Input text tidak boleh kosong." },
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ error: "Input text tidak boleh kosong." }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     if (!HUGGINGFACE_API_KEY) {
-      return Response.json(
-        { error: "HuggingFace API key tidak ditemukan di environment variable." },
-        { status: 500 }
-      );
+      return new Response(JSON.stringify({ error: "API key tidak ditemukan." }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    // Request ke HuggingFace
     const hfRes = await fetch(
       "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",
       {
@@ -34,37 +32,30 @@ export async function POST(req: Request) {
 
     const hfData = await hfRes.json();
 
-    // Jika error dari HuggingFace
     if (!hfRes.ok) {
-      return Response.json(
-        { error: "Gagal dari HuggingFace", detail: hfData },
-        { status: hfRes.status }
-      );
+      return new Response(JSON.stringify({ error: "Gagal dari HuggingFace", detail: hfData }), {
+        status: hfRes.status,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    // Output hasil ringkasan
-    // hfData bentuknya biasanya: [{ summary_text: "..." }]
-    let summary = "";
-    if (Array.isArray(hfData) && hfData[0]?.summary_text) {
-      summary = hfData[0].summary_text;
-    }
+    const summary = Array.isArray(hfData) && hfData[0]?.summary_text ? hfData[0].summary_text : "";
 
-    return Response.json({ summary }, { status: 200 });
+    return new Response(JSON.stringify({ summary }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (err: any) {
-    return Response.json(
-      { error: "Server error", message: err.message || String(err) },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ error: "Server error", message: err.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
 
-// Optional: handler method lain (GET, PUT, DELETE) supaya jelas errornya
-export async function GET() {
-  return Response.json({ error: "Method Not Allowed" }, { status: 405 });
-}
-export async function PUT() {
-  return Response.json({ error: "Method Not Allowed" }, { status: 405 });
-}
-export async function DELETE() {
-  return Response.json({ error: "Method Not Allowed" }, { status: 405 });
+export function GET() {
+  return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
+    status: 405,
+    headers: { "Content-Type": "application/json" },
+  });
 }
